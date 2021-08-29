@@ -1,6 +1,4 @@
 from typing import List, Union
-
-from .bot import Bot
 from .utils.common import safe_get, replace_many
 
 
@@ -18,7 +16,7 @@ class Message:
         self.raw_content: str = safe_get(kwargs, 'content', str, '')
         self.donation: bool = True if kwargs.get('sys') == '1' else False
         self.time_str: str = kwargs.get('time')
-        self.bot: Bot = kwargs.get('command')
+        self.bot = kwargs.get('command')  #
 
     @property
     def msg_id(self):
