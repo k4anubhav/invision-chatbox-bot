@@ -117,7 +117,7 @@ class Bot(EventHandler):
 
         response = requests.post(f'{self.site_url}/index.php', headers=self.headers, params=params,
                                  data=data, timeout=5)
-        resp = MessageResponse(**response.json())
+        resp = MessageResponse(**response.json(), bot=self)
         if resp.last_id:
             self._lastId = resp.last_id
         return resp
