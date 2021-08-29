@@ -1,7 +1,7 @@
 
 def replace_many(items: list, text: str, replace_with=''):
     for i in items:
-        text.replace(i, replace_with)
+        text = text.replace(i, replace_with)
     return text
 
 

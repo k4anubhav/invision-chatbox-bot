@@ -31,7 +31,7 @@ class Message:
         to_replace = ['\n', '\r', '\t']
         for command in self.bot.handlers.keys():
             to_replace.append(f'{self.bot.command_activator}{command}')
-        return replace_many(to_replace, '')
+        return replace_many(to_replace, self.raw_content, '')
 
     def reply(self, message: str, tag=True):
         return self.bot.send_message(message, self.username if tag else None)
