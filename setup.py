@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="invisionChatboxBot",
-    version="0.1.4",
+    version="0.1.5",
     description='Convert Chegg url to complete html',
     packages=find_packages(),
     python_requires='>=3.8',
