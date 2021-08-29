@@ -26,6 +26,10 @@ class Message:
     def content(self):
         return replace_many(['\n', '\r', '\t'], self.raw_content, '')
 
+    @property
+    def clean_content(self):
+        return replace_many(['\n', '\r', '\t', f"@{self.username}"], '')
+
 
 class MessageResponse:
     def __init__(self, **kwargs):
