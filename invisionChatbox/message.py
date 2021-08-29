@@ -16,7 +16,7 @@ class Message:
         self.raw_content: str = safe_get(kwargs, 'content', str, '')
         self.donation: bool = True if kwargs.get('sys') == '1' else False
         self.time_str: str = kwargs.get('time')
-        self.bot = kwargs.get('command')  #
+        self.bot = kwargs.get('bot')  #
 
     @property
     def msg_id(self):
