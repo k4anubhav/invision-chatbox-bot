@@ -1,10 +1,9 @@
+import logging
 import re
 from time import sleep
 from typing import List, Union
 
 import requests
-
-import logging
 
 from .base.eventhandler import EventHandler
 from .message import Message, MessageResponse
@@ -147,6 +146,65 @@ class Bot(EventHandler):
             logging.info("Success while sending msg")
         else:
             logging.critical(str(response.json()) + "<< server error #sd2e")
+
+    def send_direct_message(self, message: str, member_id: int, tag: str = None, strip: bool = True):
+        if strip:
+            message = message[:self.max_text_limit]
+        if isinstance(tag, str):
+            if not tag.startswith('@'):
+                tag = f'@{tag}'
+            message = f'{tag} {message}'
+
+        conv_id, pl_upload, file_upload = self._open_conv(member_id=member_id)
+
+        params = (
+            ('app', 'chatbox'),
+            ('module', 'conversation'),
+            ('controller', 'main'),
+            ('conID', conv_id),
+            ('do', 'postEditor'),
+        )
+
+        data = {
+            'cbForm_submitted': '1',
+            'csrfKey': self.csrf_key,
+            'MAX_FILE_SIZE': '104857600',
+            'plupload': pl_upload,
+            'chatCON_' + conv_id: message,
+            'file_con_' + conv_id: file_upload
+        }
+
+        response = requests.post(f'{self.site_url}/index.php', headers=self.headers, params=params, data=data)
+        assert response.status_code == 200
+        print(response.text)
+
+    def _open_conv(self, member_id: int):
+        params = (
+            ('app', 'chatbox'),
+            ('module', 'conversation'),
+            ('controller', 'main'),
+            ('do', 'openConversation'),
+        )
+
+        data = {
+            'csrfKey': self.csrf_key,
+            'memberID': member_id,
+            'conID': ''
+        }
+        response = requests.post(f'{self.site_url}/index.php', headers=self.headers, params=params, data=data)
+        if response.status_code != 200:
+            # TODO: custom exception
+            raise Exception()
+        data = response.json()
+        html = data['html']
+        conv_id = data['conID']
+        pl_upload = re.search(
+            r'''name=['"]plupload['"][\d\D]*?value=['"](?P<plupload>[0-9a-z]+)['"]''',
+            html).group('plupload')
+        file_upload = re.search(
+            r'''name=['"]file_con_\d+['"][\d\D]*?value=['"](?P<file_upload>[0-9a-z]+)['"]''',
+            html).group('file_upload')
+        return conv_id, pl_upload, file_upload
 
     def set_last_id(self):
         message_response = self.get_latest_messages()
