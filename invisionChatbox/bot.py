@@ -21,6 +21,7 @@ class Bot(EventHandler):
     def __init__(
             self,
             username: str,
+            bot_id: int,
             site_domain: str,
             csrf_key: str,
             cookie: str,
@@ -45,6 +46,7 @@ class Bot(EventHandler):
         self.interval = interval
         self.plp_upload = plp_upload
         self.username = username
+        self.bot_id = bot_id
         self.file_room = file_room
         self.room_name = room_name
         self.command_activator = command_activator
