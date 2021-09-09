@@ -6,7 +6,7 @@ from typing import List, Union
 import requests
 
 from .base.eventhandler import EventHandler
-from .message import Message, MessageResponse
+from .context import Context, ContextResponse
 
 # TODO: Replace logger
 logging.basicConfig(level=logging.INFO)
@@ -96,7 +96,7 @@ class Bot(EventHandler):
     def site_url(self):
         return f'{self._http}://{self.site_domain}'
 
-    def get_latest_messages(self) -> MessageResponse:
+    def get_latest_messages(self) -> ContextResponse:
         params = (
             ('app', 'chatbox'),
             ('module', 'chatbox'),
@@ -116,7 +116,7 @@ class Bot(EventHandler):
 
         response = requests.post(f'{self.site_url}/index.php', headers=self.headers, params=params,
                                  data=data, timeout=5)
-        resp = MessageResponse(**response.json(), bot=self)
+        resp = ContextResponse(**response.json(), bot=self)
         if resp.last_id:
             self._lastId = resp.last_id
         return resp
@@ -196,6 +196,9 @@ class Bot(EventHandler):
             # TODO: custom exception
             raise Exception()
         data = response.json()
+        if data.get('type') == 'error':
+            # TODO: custom exception
+            raise Exception()
         html = data['html']
         conv_id = data['conID']
         pl_upload = re.search(
@@ -233,14 +236,14 @@ class Bot(EventHandler):
         logging.info(f"\r{response.text} <<ping reply")
         return True if response.text == 'OK' else False
 
-    def handle_message(self, message: Message, data=None):
+    def handle_message(self, context: Context, data=None):
         if not data:
             data = {}
-        if search_res := self.command_patter.search(message.content):
+        if search_res := self.command_patter.search(context.content):
             command = search_res.group('command')
-            self.call_command(command, message, data=data)
+            self.call_command(command, context, data=data)
 
-        self.call_command('__non_command__', message, data=data)
+        self.call_command('__non_command__', context, data=data)
 
     def run(self):
         if self.ping():
@@ -255,9 +258,8 @@ class Bot(EventHandler):
                     self.ping()
                     p = 0
 
-            message_response = self.get_latest_messages()
-            for message in message_response.content:
-                message: Message
+            context_resp = self.get_latest_messages()
+            for message in context_resp.content:
+                message: Context
                 self.handle_message(message)
-
             sleep(self.interval)

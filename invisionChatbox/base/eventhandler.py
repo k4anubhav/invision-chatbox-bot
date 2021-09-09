@@ -1,6 +1,6 @@
 from typing import Union, List, Dict
 
-from invisionChatbox.message import Message
+from invisionChatbox.context import Context
 from invisionChatbox.base.basic import Validator
 
 
@@ -11,19 +11,19 @@ class Event:
         self.callback = callback
         self.validators = validators
 
-    def check(self, message: Message, data: dict):
-        return all([validator.validate(message.content) for validator in self.validators])
+    def check(self, context: Context, data: dict):
+        return all([validator.validate(context.content) for validator in self.validators])
 
 
 class EventHandler:
     def __init__(self):
         self.handlers: Dict[str, List[Event]] = {}
 
-    def call_command(self, command_name, message: Message, data: dict):
+    def call_command(self, command_name, context: Context, data: dict):
         if command_name in self.handlers.keys():
             for event in self.handlers[command_name]:
-                if event.check(message, data):
-                    event.callback(message, data)
+                if event.check(context, data):
+                    event.callback(context, data)
 
     def event(self, event_name: Union[str, List[str]] = None, validators=None, is_command=False):
 
