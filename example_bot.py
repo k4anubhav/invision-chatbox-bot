@@ -24,6 +24,8 @@ def welcome(message: Context, data: dict):
 
 @bot.command()
 def test(message: Context, data: dict):
+    print(message.content)
+    print(message.clean_content)
     message.reply("test passed")
     message.reply("test passed", dm=True)
 

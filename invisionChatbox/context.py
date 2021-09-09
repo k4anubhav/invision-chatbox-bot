@@ -1,3 +1,4 @@
+import re
 from typing import List, Union
 
 from .message import Message
@@ -30,9 +31,10 @@ class Context:
     @property
     def clean_content(self):
         to_replace = ['\n', '\r', '\t']
+        cnt = self.message.raw_content
         for command in self.bot.handlers.keys():
-            to_replace.append(f'{self.bot.command_activator}{command}')
-        return replace_many(to_replace, self.message.raw_content, '').strip()
+            cnt = re.sub(rf'^\s*{self.bot.command_activator}{command}', '', self.message.raw_content)
+        return replace_many(to_replace, cnt, '').strip()
 
 
 class ContextResponse:
