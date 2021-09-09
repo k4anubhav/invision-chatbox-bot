@@ -29,6 +29,18 @@ class Context:
                                          strip=strip)
 
     @property
+    def user_id(self):
+        return self.message.user_id
+
+    @property
+    def username(self):
+        return self.message.username
+
+    @property
+    def name_format(self):
+        return self.message.name_format
+
+    @property
     def clean_content(self):
         to_replace = ['\n', '\r', '\t']
         cnt = self.message.raw_content
