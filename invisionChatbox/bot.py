@@ -35,6 +35,7 @@ class Bot(EventHandler):
             command_activator: str = '/',
             max_file_size: int = 104857600,
             online_status: bool = True,
+            case_sensitive: bool = False
     ):
         super().__init__()
         self._show_ago_time: str = ''
@@ -50,13 +51,16 @@ class Bot(EventHandler):
         self.file_room = file_room
         self.room_name = room_name
         self.command_activator = command_activator
+        self.case_sensitive = case_sensitive
         self.max_file_size = max_file_size
         self.max_text_limit = max_text_limit
         self.cookie = cookie
         self._http = 'https' if https else 'http'
 
     @property
-    def command_patter(self):
+    def command_pattern(self):
+        if self.case_sensitive:
+            return re.compile(rf'^{self.command_activator}(?P<command>[a-zA-Z0-9]+)?', re.IGNORECASE)
         return re.compile(rf'^{self.command_activator}(?P<command>[a-zA-Z0-9]+)?')
 
     @property
@@ -241,7 +245,7 @@ class Bot(EventHandler):
     def handle_message(self, context: Context, data=None):
         if not data:
             data = {}
-        if search_res := self.command_patter.search(context.content):
+        if search_res := self.command_pattern.search(context.content):
             command = search_res.group('command')
             self.call_command(command, context, data=data)
 
@@ -253,15 +257,18 @@ class Bot(EventHandler):
         p = 0
         self.set_last_id()
         while True:
-            if self.online_status:
-                # fixme: do this acc to time
-                p += 1
-                if p > 80:
-                    self.ping()
-                    p = 0
+            try:
+                if self.online_status:
+                    # fixme: do this acc to time
+                    p += 1
+                    if p > 80:
+                        self.ping()
+                        p = 0
 
-            context_resp = self.get_latest_messages()
-            for message in context_resp.content:
-                message: Context
-                self.handle_message(message)
-            sleep(self.interval)
+                context_resp = self.get_latest_messages()
+                for message in context_resp.content:
+                    message: Context
+                    self.handle_message(message)
+                sleep(self.interval)
+            except Exception as e:
+                print(e)

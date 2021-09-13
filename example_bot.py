@@ -11,15 +11,16 @@ with open('conf.json', 'r') as f:
 bot = Bot(**conf)
 
 
-@bot.command(['hello', 'hi'],)
+# print message when user use command hello or hi # /hello and /hi if activator is `/`
+@bot.command(['hello', 'hi'])
 def hello(message: Context, data: dict):
     print(message.content)
 
 
-@bot.command(is_command=False, validators=[RegexValidator(re.compile(r'welcome.+hello'))])
+# Reply Thanks, when someone says welcome
+@bot.command(is_command=False, validators=[RegexValidator(re.compile(r'welcome', re.IGNORECASE))])
 def welcome(message: Context, data: dict):
-    print('welcome')
-    bot.send_message('dasdasd')
+    bot.send_message('Thanks')
 
 
 @bot.command()
@@ -30,7 +31,4 @@ def test(message: Context, data: dict):
     message.reply("test passed", dm=True)
 
 
-# bot.send_direct_message(member_id=36, message="test message")
 bot.run()
-
-print('sd')
