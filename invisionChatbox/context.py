@@ -45,7 +45,7 @@ class Context:
         to_replace = ['\n', '\r', '\t']
         cnt = self.message.raw_content
         for command in self.bot.handlers.keys():
-            cnt = re.sub(rf'^\s*{self.bot.command_activator}{command}', '', self.message.raw_content)
+            cnt = re.sub(rf'^\s*{self.bot.command_activator}{command}', '', cnt)
         return replace_many(to_replace, cnt, '').strip()
 
 
