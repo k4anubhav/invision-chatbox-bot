@@ -34,6 +34,7 @@ class Bot(EventHandler):
             max_text_limit: int = 100,
             command_activator: str = '/',
             max_file_size: int = 104857600,
+            self_reply: bool = False,
             online_status: bool = True,
             case_sensitive: bool = False
     ):
@@ -43,6 +44,7 @@ class Bot(EventHandler):
         self._lastId: int = 2
         self.site_domain: str = site_domain
         self.room_id = room_id
+        self.self_reply = self_reply
         self.csrf_key = csrf_key
         self.interval = interval
         self.plp_upload = plp_upload
@@ -272,6 +274,8 @@ class Bot(EventHandler):
                 context_resp = self.get_latest_messages()
                 for message in context_resp.content:
                     message: Context
+                    if (not self.self_reply) and str(message.user_id) == str(self.bot_id):
+                        continue
                     self.handle_message(message)
                 sleep(self.interval)
             except Exception as e:
