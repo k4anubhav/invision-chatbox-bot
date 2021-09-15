@@ -55,6 +55,7 @@ class Bot(EventHandler):
         self.max_file_size = max_file_size
         self.max_text_limit = max_text_limit
         self.cookie = cookie
+        self.skip_q = True
         self._http = 'https' if https else 'http'
 
     @property
@@ -255,9 +256,12 @@ class Bot(EventHandler):
         if self.ping():
             print('Ping')
         p = 0
-        self.set_last_id()
         while True:
             try:
+                if self.skip_q:
+                    self.set_last_id()
+                    self.skip_q = False
+
                 if self.online_status:
                     # fixme: do this acc to time
                     p += 1
