@@ -14,12 +14,10 @@ class Context:
     def content(self):
         return self.message.content
 
-    def reply(self, message: str, tag=None, dm=None, strip=True):
-        if dm is None:
-            dm = False
+    def reply(self, message: str, tag: bool = None, dm: bool = False, strip=True):
         if dm and tag is None:
             tag = False
-        else:
+        if tag is None:
             tag = True
 
         if not dm:
