@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="invisionChatboxBot",
-    version="0.3.0",
-    description='Convert Chegg url to complete html',
+    version="0.3.1",
+    description='Allows to make bots for invison community chatbox',
     packages=find_packages(),
     python_requires='>=3.8',
     install_requires=[

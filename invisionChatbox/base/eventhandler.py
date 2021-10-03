@@ -1,7 +1,7 @@
 from typing import Union, List, Dict
 
 from invisionChatbox.context import Context
-from invisionChatbox.base.basic import Validator
+from invisionChatbox.base.base import Validator
 
 
 class Event:
@@ -12,7 +12,7 @@ class Event:
         self.validators = validators
 
     def check(self, context: Context, data: dict):
-        return all([validator.validate(context.content) for validator in self.validators])
+        return all([validator.validate(context) for validator in self.validators])
 
 
 class EventHandler:
