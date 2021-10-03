@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 from time import sleep
 from typing import List, Union
 
@@ -47,6 +48,8 @@ class Bot(EventHandler):
         self.self_reply = self_reply
         self.csrf_key = csrf_key
         self.interval = interval
+        # fixme: record correct time for ping
+        self.online_interval = 6
         self.plp_upload = plp_upload
         self.username = username
         self.bot_id = bot_id
@@ -246,8 +249,8 @@ class Bot(EventHandler):
         return True if response.text == 'OK' else False
 
     def handle_message(self, context: Context, data=None):
-        if not data:
-            data = {}
+        data = {} if not data else data
+
         if search_res := self.command_pattern.search(context.content):
             command = search_res.group('command')
             self.call_command(command, context, data=data)
@@ -257,7 +260,7 @@ class Bot(EventHandler):
     def run(self):
         if self.ping():
             print('Ping')
-        p = 0
+        last_ping = time.time()
         while True:
             try:
                 if self.skip_q:
@@ -265,14 +268,11 @@ class Bot(EventHandler):
                     self.skip_q = False
 
                 if self.online_status:
-                    # fixme: do this acc to time
-                    p += 1
-                    if p > 80:
+                    if (last_ping - time.time()) > self.online_interval:
                         self.ping()
-                        p = 0
 
-                context_resp = self.get_latest_messages()
-                for message in context_resp.content:
+                contexts_response = self.get_latest_messages()
+                for message in contexts_response.content:
                     message: Context
                     if (not self.self_reply) and str(message.user_id) == str(self.bot_id):
                         continue
