@@ -1,14 +1,21 @@
-import json
 import re
 
-from invisionChatbox.bot import Bot
+from invisionChatbox.clients import BasicClient
 from invisionChatbox.context import Context
 from invisionChatbox.utils.validators import RegexValidator
+from invisionChatbox.utils.decorators import run_in_thread
 
-with open('conf.json', 'r') as f:
-    conf = json.load(f)
-
-bot = Bot(**conf)
+bot = BasicClient(
+    username="someone",
+    bot_id=1,
+    cookie="cookie here",
+    room_id=1,
+    csrf_key="csrf key",
+    room_name="room name",
+    file_room="file_room",
+    plp_upload="plp upload key",
+    site_domain="example.com",
+)
 
 
 # print message when user use command hello or hi # /hello and /hi if activator is `/`
@@ -24,7 +31,9 @@ def welcome(ctx: Context, data: dict):
 
 
 # run when someone uses test command, /test if activator is `/`
+# using run in threads command sometimes can run twice
 @bot.command()
+@run_in_thread
 def test(ctx: Context, data: dict):
     print(ctx.content)
     print(ctx.clean_content)

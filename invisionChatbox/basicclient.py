@@ -10,10 +10,12 @@ from .base.eventhandler import EventHandler
 from .context import Context, ContextResponse
 
 # TODO: Replace logger
+from .exceptions import OpenConvException, OpenConvServerException
+
 logging.basicConfig(level=logging.INFO)
 
 
-class Bot(EventHandler):
+class BasicClient(EventHandler):
     """
     Bot Class
     Contains Funcs that usually use quite frequently and need all over the program
@@ -205,12 +207,10 @@ class Bot(EventHandler):
         }
         response = requests.post(f'{self.site_url}/index.php', headers=self.headers, params=params, data=data)
         if response.status_code != 200:
-            # TODO: custom exception
-            raise Exception()
+            raise OpenConvException()
         data = response.json()
         if data.get('type') == 'error':
-            # TODO: custom exception
-            raise Exception()
+            raise OpenConvServerException()
         html = data['html']
         conv_id = data['conID']
         pl_upload = re.search(
