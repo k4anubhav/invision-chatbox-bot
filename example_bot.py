@@ -1,21 +1,12 @@
+import json
 import re
 
-from invisionChatbox.clients import BasicClient
+from invisionChatbox.basicclient import BasicClient
 from invisionChatbox.context import Context
 from invisionChatbox.utils.validators import RegexValidator
 from invisionChatbox.utils.decorators import run_in_thread
 
-bot = BasicClient(
-    username="someone",
-    bot_id=1,
-    cookie="cookie here",
-    room_id=1,
-    csrf_key="csrf key",
-    room_name="room name",
-    file_room="file_room",
-    plp_upload="plp upload key",
-    site_domain="example.com",
-)
+bot = BasicClient(**json.load(open('conf.json')))
 
 
 # print message when user use command hello or hi # /hello and /hi if activator is `/`

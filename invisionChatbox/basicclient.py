@@ -88,8 +88,10 @@ class BasicClient(EventHandler):
             'cookie': self.cookie,
         }
 
-    def command(self, event_name: Union[str, List[str]] = None, validators=None, is_command: bool = True):
-        return self.event(event_name=event_name, validators=validators, is_command=is_command)
+    def command(self, event_name: Union[str, List[str]] = None, validators=None, is_command: bool = True, case_sensitive: bool = False):
+        if case_sensitive:
+            event_name = event_name.lower()
+        return self.event(event_name=event_name, validators=validators, is_command=is_command, case_sensitive=case_sensitive)
 
     @property
     def page_headers(self):
@@ -253,6 +255,8 @@ class BasicClient(EventHandler):
 
         if search_res := self.command_pattern.search(context.content):
             command = search_res.group('command')
+            if not self.case_sensitive:
+                command = command.lower()
             self.call_command(command, context, data=data)
 
         self.call_command('__non_command__', context, data=data)
