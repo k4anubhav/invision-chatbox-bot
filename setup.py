@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="invisionChatboxBot",
-    version="0.3.3",
+    version="0.3.4",
     description='Allows to make bots for invison community chatbox',
     packages=find_packages(),
     python_requires='>=3.8',

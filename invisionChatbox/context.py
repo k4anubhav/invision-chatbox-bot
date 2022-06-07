@@ -1,14 +1,17 @@
 import re
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .basicclient import BasicClient
 
 from .message import Message
 from .utils.common import replace_many
 
 
 class Context:
-    def __init__(self, **kwargs):
-        self.message: Message = kwargs.get('message')
-        self.bot = kwargs.get('bot')
+    def __init__(self, message: Message, bot: 'BasicClient'):
+        self.message: Message = message
+        self.bot: 'BasicClient' = bot
 
     @property
     def content(self):

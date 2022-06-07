@@ -1,4 +1,5 @@
 import enum
+import re
 from re import Pattern
 
 from invisionChatbox.base.base import Validator
@@ -46,3 +47,21 @@ class SystemValidator(Validator):
             return True if context.user_id == -1 else False
         else:
             return True if (context.message.system and (True if context.user_id == -1 else False)) else False
+
+
+class TaggedValidator(Validator):
+    def __init__(self, tag: str):
+        self.tag = tag
+
+    def validate(self, context: Context, *args, **kwargs) -> bool:
+        if re.search(f"\b@{self.tag}\b", context.message.raw_content):
+            return True
+        return False
+
+
+class SelfTaggedValidator(Validator):
+
+    def validate(self, context: Context, *args, **kwargs) -> bool:
+        if re.search(f"\b@{context.bot.username}\b", context.message.raw_content):
+            return True
+        return False
