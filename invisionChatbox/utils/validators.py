@@ -54,7 +54,7 @@ class TaggedValidator(Validator):
         self.tag = tag
 
     def validate(self, context: Context, *args, **kwargs) -> bool:
-        if re.search(f"\b@{self.tag}\b", context.message.raw_content):
+        if re.search(f"@{self.tag}(?:$| )", context.message.raw_content):
             return True
         return False
 
@@ -62,6 +62,6 @@ class TaggedValidator(Validator):
 class SelfTaggedValidator(Validator):
 
     def validate(self, context: Context, *args, **kwargs) -> bool:
-        if re.search(f"\b@{context.bot.username}\b", context.message.raw_content):
+        if re.search(f"@{context.bot.username}(?:$| )", context.message.raw_content):
             return True
         return False
