@@ -8,7 +8,6 @@ import requests
 
 from .base.eventhandler import EventHandler
 from .context import Context, ContextResponse
-
 # TODO: Replace logger
 from .exceptions import OpenConvException, OpenConvServerException
 
@@ -88,10 +87,12 @@ class BasicClient(EventHandler):
             'cookie': self.cookie,
         }
 
-    def command(self, event_name: Union[str, List[str]] = None, validators=None, is_command: bool = True, case_sensitive: bool = False):
+    def command(self, event_name: Union[str, List[str]] = None, validators=None, is_command: bool = True,
+                case_sensitive: bool = False):
         if case_sensitive:
             event_name = event_name.lower()
-        return self.event(event_name=event_name, validators=validators, is_command=is_command, case_sensitive=case_sensitive)
+        return self.event(event_name=event_name, validators=validators, is_command=is_command,
+                          case_sensitive=case_sensitive)
 
     @property
     def page_headers(self):
@@ -281,6 +282,6 @@ class BasicClient(EventHandler):
                     if (not self.self_reply) and str(message.user_id) == str(self.bot_id):
                         continue
                     self.handle_message(message)
-                sleep(self.interval)
             except Exception as e:
                 print(e)
+            sleep(self.interval)
